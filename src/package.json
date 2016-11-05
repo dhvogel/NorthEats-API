@@ -1,0 +1,11 @@
+{
+  "name":"northeats-api-interface",
+  "version":"0.0.0",
+  "private": true,
+  "dependencies": {
+    "async": "^1.5.2",
+    "body-parser": "~1.13.2",
+    "express": "~4.13.1",
+    "aws-sdk": "2.6.15"
+  }
+}
