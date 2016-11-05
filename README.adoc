@@ -1,1 +1,17 @@
 = Welcome to the NorthEats API
+
+== Hey Scott, Jon, and Rob
+
+=== To run the app, here's what you do
+
+1. Make sure you have http://blog.teamtreehouse.com/install-node-js-npm-mac[Node and npm] installed
+
+2. From a directory you want to pull the NorthEats project into, run:
+
+ $ git clone https://github.com/dhvogel/NorthEats-API.git
+ $ cd NorthEats-API
+ $ cd src
+ $ npm install
+ $ node server.js
+
+3. Go to http://localhost:8080 in your web browser. You should see a NorthEats-related message.
