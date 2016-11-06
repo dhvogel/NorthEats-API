@@ -38,11 +38,13 @@ exports.test = function(req, res) {
   });
 }
 
+//Jon
 //TODO:Should retrieve ALL Restaurant objects from DynamoDB
 exports.get = function(req, res) {
 
 }
 
+//Rob
 //TODO: Should post a Restaurant Object to DynamoDB
 exports.post = function(req, res) {
 
