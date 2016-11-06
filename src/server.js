@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(__dirname + "/public"));
 
 //routes
-var routes = require('./routes/index');
+require('./routes/index')(app);
 
 //start app at whatever port we specified
 var server = app.listen(port);
