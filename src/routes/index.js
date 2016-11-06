@@ -9,6 +9,7 @@ module.exports = function(app) {
 
   app.get('/test', restaurant.test);
 
+
   app.get('/restaurant', restaurant.get);
 
   app.post('/restaurant', restaurant.post);

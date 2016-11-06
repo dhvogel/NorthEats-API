@@ -7,7 +7,8 @@ aws.config.update({
   "secretAccessKey": "EBJjyfSmpf5BC4VVYTufeEBbIZ0EXVk+nA86gJES"
 });
 
-var dynamodb = new aws.DynamoDB.DocumentClient();
+var dynamodbClient = new aws.DynamoDB.DocumentClient();
+var dynamodb = new aws.DynamoDB()
 
 
 
@@ -22,7 +23,7 @@ exports.test = function(req, res) {
     }
   };
 
-  dynamodb.get(params, function(err, data) {
+  dynamodbClient.get(params, function(err, data) {
       if (err) {
           return res.status(400).json({
             success: false,
