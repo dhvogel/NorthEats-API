@@ -1,4 +1,4 @@
-var aws         = require('aws-sdk');
+var aws = require('aws-sdk');
 
 //TODO: MASK THESE!!
 aws.config.update({
@@ -9,9 +9,12 @@ aws.config.update({
 
 var dynamodb = new aws.DynamoDB.DocumentClient();
 
+
+
+//=====RESTAURANT API=====
+
+//test function for reference
 exports.test = function(req, res) {
-
-
   var params = {
     TableName: "NorthEats-Restaurant-Test",
     Key: {
@@ -32,4 +35,14 @@ exports.test = function(req, res) {
           });
       }
   });
+}
+
+//TODO:Should retrieve ALL Restaurant objects from DynamoDB
+exports.get = function(req, res) {
+
+}
+
+//TODO: Should post a Restaurant Object to DynamoDB
+exports.post = function(req, res) {
+
 }
