@@ -41,11 +41,17 @@ exports.test = function(req, res) {
 //Jon
 //TODO:Should retrieve ALL Restaurant objects from DynamoDB
 exports.get = function(req, res) {
-
+  return res.status(200).json({
+    success: true,
+    data: "GET /restaurant"
+  });
 }
 
 //Rob
 //TODO: Should post a Restaurant Object to DynamoDB
 exports.post = function(req, res) {
-
+  return res.status(200).json({
+    success: true,
+    data: "POST /restaurant"
+  });
 }
