@@ -7,12 +7,14 @@ var restaurant = require('./restaurant')
 
 module.exports = function(app) {
 
-  app.get('/test', restaurant.test);
+  //restaurant
+  app.get('/restaurant', restaurant.getAllRestaurants);
 
+  app.post('/restaurant', restaurant.postRestaurant);
 
-  app.get('/restaurant', restaurant.get);
+  app.get('/restaurant/:restaurantId', restaurant.getRestaurantById);
 
-  app.post('/restaurant', restaurant.post);
+  app.delete('/restaurant/:restaurantId', restaurant.deleteRestaurantById);
 
 
 }

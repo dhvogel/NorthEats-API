@@ -7,19 +7,42 @@ aws.config.update({
   "secretAccessKey": "EBJjyfSmpf5BC4VVYTufeEBbIZ0EXVk+nA86gJES"
 });
 
+var TABLE_NAME = "NorthEats-Restaurant-Test";
+
+
+var dynamodb = new aws.DynamoDB();
 var dynamodbClient = new aws.DynamoDB.DocumentClient();
-var dynamodb = new aws.DynamoDB()
+
 
 
 
 //=====RESTAURANT API=====
 
-//test function for reference
-exports.test = function(req, res) {
+//Jon
+//TODO:Should retrieve ALL Restaurant objects from DynamoDB
+exports.getAllRestaurants = function(req, res) {
+  return res.status(200).json({
+    success: true,
+    data: "GET /restaurant"
+  });
+}
+
+//Rob
+//TODO: Should post a Restaurant Object to DynamoDB
+exports.postRestaurant = function(req, res) {
+  return res.status(200).json({
+    success: true,
+    data: "POST /restaurant"
+  });
+}
+
+exports.getRestaurantById = function(req, res) {
+  var restaurantId = req.params.restaurantId;
+
   var params = {
-    TableName: "NorthEats-Restaurant-Test",
+    TableName: TABLE_NAME,
     Key: {
-        "RestaurantId": 1234
+        "restaurantId": restaurantId
     }
   };
 
@@ -38,20 +61,29 @@ exports.test = function(req, res) {
   });
 }
 
-//Jon
-//TODO:Should retrieve ALL Restaurant objects from DynamoDB
-exports.get = function(req, res) {
-  return res.status(200).json({
-    success: true,
-    data: "GET /restaurant"
-  });
-}
+exports.deleteRestaurantById = function(req, res) {
+  var restaurantId = req.params.restaurantId;
 
-//Rob
-//TODO: Should post a Restaurant Object to DynamoDB
-exports.post = function(req, res) {
-  return res.status(200).json({
-    success: true,
-    data: "POST /restaurant"
+  var params = {
+    TableName: TABLE_NAME,
+    Key: {
+        "restaurantId": restaurantId
+    }
+  };
+
+  dynamodbClient.delete(params, function(err, data) {
+      if (err) {
+          return res.status(400).json({
+            success: false,
+            error: err
+          });
+      } else {
+          return res.status(200).json({
+            success: true,
+            data: "Deleted item with restaurantId " + restaurantId + " from " + TABLE_NAME + " table."
+          });
+      }
   });
+
+
 }
