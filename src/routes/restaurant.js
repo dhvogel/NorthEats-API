@@ -1,14 +1,8 @@
 var aws = require('aws-sdk');
 
-//TODO: MASK THESE!!
-aws.config.update({
-  "region": "us-east-1",
-  "accessKeyId": "AKIAJEGD4EM2O7JJKWDA",
-  "secretAccessKey": "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"
-});
+aws.config.loadFromPath(__dirname + '/config/aws-credentials.json');
 
 var TABLE_NAME = "NorthEats-Restaurant-Test";
-
 
 var dynamodb = new aws.DynamoDB();
 var dynamodbClient = new aws.DynamoDB.DocumentClient();
@@ -84,6 +78,4 @@ exports.deleteRestaurantById = function(req, res) {
           });
       }
   });
-
-
 }
