@@ -7,7 +7,8 @@
     "available": true,
     "options": [
       {
-        "required": 1,
+        "requiredMin": 1,
+        "requiredMax": 2,
         "optionNames": [
           "pepperoni",
           "extra cheese",
@@ -15,7 +16,8 @@
         ]
       },
       {
-        "required": 2,
+        "requiredMin": 1,
+        "requiredMax": 1,
         "optionNames": [
           "cheese-whiz",
           "oreos",
