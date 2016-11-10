@@ -67,3 +67,33 @@ exports.getMenuFromRestaurant = function(req, res) {
     }
   })
 }
+
+
+/*
+DELETE /menu/:restaurantId
+*/
+exports.deleteMenuFromRestaurant = function(req, res) {
+  var restaurantId = req.params.restaurantId;
+
+  var params = {
+    TableName: TABLE_NAME,
+    Key: {
+        "restaurantId": restaurantId
+    }
+  };
+
+  dynamodbClient.delete(params, function(err, data) {
+      if (err) {
+          return res.status(400).json({
+            success: false,
+            error: err
+          });
+      } else {
+          return res.status(200).json({
+            success: true,
+            data: "Deleted item with restaurantId " + restaurantId + " from " + TABLE_NAME + " table."
+          });
+      }
+  });
+
+}

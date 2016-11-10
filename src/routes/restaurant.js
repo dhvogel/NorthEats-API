@@ -14,6 +14,9 @@ var dynamodbClient = new aws.DynamoDB.DocumentClient();
 
 //Jon
 //TODO:Should retrieve ALL Restaurant objects from DynamoDB
+/*
+GET /restaurant
+*/
 exports.getAllRestaurants = function(req, res) {
   return res.status(200).json({
     success: true,
@@ -21,8 +24,12 @@ exports.getAllRestaurants = function(req, res) {
   });
 }
 
+
 //Rob
 //TODO: Should post a Restaurant Object to DynamoDB
+/*
+POST /restaurant
+*/
 exports.postRestaurant = function(req, res) {
   return res.status(200).json({
     success: true,
@@ -30,6 +37,10 @@ exports.postRestaurant = function(req, res) {
   });
 }
 
+
+/*
+GET /restaurant/:restaurantId
+*/
 exports.getRestaurantById = function(req, res) {
   var restaurantId = req.params.restaurantId;
 
@@ -55,6 +66,9 @@ exports.getRestaurantById = function(req, res) {
   });
 }
 
+/*
+DELETE /restaurant/:restaurantId
+*/
 exports.deleteRestaurantById = function(req, res) {
   var restaurantId = req.params.restaurantId;
 

@@ -22,9 +22,9 @@ module.exports = function(app) {
   app.post('/menu/:restaurantId', menu.postMenu);
 
   app.get('/menu/:restaurantId', menu.getMenuFromRestaurant);
-  /*
-  app.delete('/menu/:restaurantId', menu.deleteMenuFromRestaurant);
 
+  app.delete('/menu/:restaurantId', menu.deleteMenuFromRestaurant);
+  /*
   app.put('/menu/:restaurantId', menu.updateMenu);
 
   app.delete('/menu/:restaurantId/:itemId', menu.deleteItemFromMenu);
