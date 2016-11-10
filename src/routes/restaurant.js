@@ -1,5 +1,4 @@
 var aws = require('aws-sdk');
-var shortid = require('shortid');
 
 aws.config.loadFromPath(__dirname + '/config/aws-credentials.json');
 
