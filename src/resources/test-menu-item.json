@@ -1,0 +1,27 @@
+[
+  {
+    "itemId": "test",
+    "itemName": "pizza",
+    "itemDescription": "A really good pizza",
+    "price": 9.00,
+    "available": true,
+    "options": [
+      {
+        "required": 1,
+        "optionNames": [
+          "pepperoni",
+          "extra cheese",
+          "skittles"
+        ]
+      },
+      {
+        "required": 2,
+        "optionNames": [
+          "cheese-whiz",
+          "oreos",
+          "mustard"
+        ]
+      }
+    ]
+  }
+]
