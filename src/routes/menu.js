@@ -9,7 +9,9 @@ var TABLE_NAME = "NorthEats-Menu-Test";
 var dynamodb = new aws.DynamoDB();
 var dynamodbClient = new aws.DynamoDB.DocumentClient();
 
-
+/*
+POST /menu/:restaurantId
+*/
 exports.postMenu = function(req, res) {
   var restaurantId = req.params.restaurantId;
 
@@ -36,4 +38,32 @@ exports.postMenu = function(req, res) {
       })
     };
   });
+}
+
+/*
+GET /menu/:restaurantId
+*/
+exports.getMenuFromRestaurant = function(req, res) {
+  var restaurantId = req.params.restaurantId;
+
+  var params = {
+    TableName: TABLE_NAME,
+    Key: {
+      "restaurantId": restaurantId
+    }
+  };
+
+  dynamodbClient.get(params, function(err, data) {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        error: err
+      })
+    } else {
+      return res.status(200).json({
+        success: true,
+        data: data
+      })
+    }
+  })
 }
