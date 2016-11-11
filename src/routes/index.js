@@ -11,11 +11,13 @@ module.exports = function(app) {
   //restaurant
   app.get('/restaurant', restaurant.getAllRestaurants);
 
-  app.post('/restaurant', restaurant.postRestaurant);
+  app.post('/restaurant/:restaurantId', restaurant.postRestaurant);
 
   app.get('/restaurant/:restaurantId', restaurant.getRestaurantById);
 
   app.delete('/restaurant/:restaurantId', restaurant.deleteRestaurantById);
+
+  app.put('/restaurant/:restaurantId', restaurant.updateRestaurantById);
 
 
   //menu
