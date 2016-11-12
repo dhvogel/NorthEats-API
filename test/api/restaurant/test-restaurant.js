@@ -11,8 +11,7 @@ describe('Routing', function() {
     //test db before anything
     var TABLE_NAME = "NorthEats-Restaurant-Test";
     aws.config.loadFromPath(__dirname + '/../../../src/routes/config/aws-credentials.json');
-
-
+    
     done();
   });
 
