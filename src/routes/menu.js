@@ -28,7 +28,7 @@ exports.postMenu = function(req, res) {
     if (err) {
       return res.status(400).json({
         success: false,
-        error: err
+        data: err
       })
     }
     else {
@@ -55,9 +55,9 @@ exports.getMenuFromRestaurant = function(req, res) {
 
   dynamodbClient.get(params, function(err, data) {
     if (err) {
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
-        error: err
+        data: err
       })
     } else {
       return res.status(200).json({
@@ -86,7 +86,7 @@ exports.deleteMenuFromRestaurant = function(req, res) {
       if (err) {
           return res.status(400).json({
             success: false,
-            error: err
+            data: err
           });
       } else {
           return res.status(200).json({
