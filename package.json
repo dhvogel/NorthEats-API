@@ -12,22 +12,20 @@
     "supertest": "2.0.1",
     "assert": "1.4.1",
     "should": "11.1.1",
-    "is-empty-object": "1.1.1"
+    "is-empty-object": "1.1.1",
+    "faker": "3.1.0",
+    "dynalite": "1.0.3",
+    "dynamodb-test": "0.3.0",
+    "tape": "4.6.2"
   },
-  "description": "= Welcome to the NorthEats API",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
+  "description": "Welcome to the NorthEats API",
+  "main": "src/server.js",
   "devDependencies": {},
-  "scripts": {
-    "test": "console.log('hi')"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dhvogel/NorthEats-API.git"
   },
-  "author": "",
+  "author": "NorthEats Engineering",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/dhvogel/NorthEats-API/issues"

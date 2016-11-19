@@ -1,7 +1,7 @@
 var aws = require('aws-sdk');
 var isEmptyObject = require('is-empty-object');
 
-aws.config.loadFromPath(__dirname + '/config/aws-credentials.json');
+aws.config.loadFromPath(__dirname + '/config/DEV-aws-credentials.json');
 
 var TABLE_NAME = "NorthEats-Restaurant-Test";
 

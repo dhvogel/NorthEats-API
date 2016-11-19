@@ -30,7 +30,6 @@ module.exports = function(app) {
   /*
   app.put('/menu/:restaurantId', menu.updateMenu);
 
-  app.delete('/menu/:restaurantId/:itemId', menu.deleteItemFromMenu);
   */
 
 }
