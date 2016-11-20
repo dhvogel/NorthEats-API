@@ -19,10 +19,24 @@ var dynamodbClient = new aws.DynamoDB.DocumentClient();
 GET /restaurant
 */
 exports.getAllRestaurants = function(req, res) {
-  return res.status(200).json({
-    success: true,
-    data: "GET /restaurant"
-  });
+	var params = {
+	  TableName : TABLE_NAME,
+	};
+	
+	dynamodbClient.scan(params, function(err, data) {
+	    if (err) {
+	      return res.status(500).json({
+	        success: false,
+	        error: err
+	      })
+	    }
+	    else {
+	      return res.status(200).json({
+	        success: true,
+	        data: data
+	      })
+	    };
+	  });
 }
 
 
@@ -32,12 +46,40 @@ exports.getAllRestaurants = function(req, res) {
 POST /restaurant
 */
 exports.postRestaurant = function(req, res) {
-  return res.status(200).json({
-    success: true,
-    data: "POST /restaurant"
-  });
+	
+    var params = {
+      TableName: TABLE_NAME,
+	  Item: {
+	        //restaurantId : (Math.random()*100000000000000000).toString(),
+		  	restaurantId: req.body.displayName+req.body.city+req.body.state,
+			description: req.body.description,
+		  	displayName: req.body.displayName,
+		  	email: req.body.email,
+		  	phone: req.body.phone,
+		    city: req.body.city,
+		    state: req.body.state
+		  	
+	      }
+	  
+    };
+	
+ 
+	dynamodbClient.put(params, function(err, data) {
+	    if (err) {
+	      return res.status(500).json({
+	        success: false,
+	        error: err
+	      })
+	    }
+	    else {
+	      return res.status(200).json({
+	        success: true,
+	        data: data
+	      })
+	    };
+	  });
+  
 }
-
 
 /*
 GET /restaurant/:restaurantId
