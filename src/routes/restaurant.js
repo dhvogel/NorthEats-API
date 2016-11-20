@@ -1,6 +1,7 @@
 var aws = require('aws-sdk');
+var isEmptyObject = require('is-empty-object');
 
-aws.config.loadFromPath(__dirname + '/config/aws-credentials.json');
+aws.config.loadFromPath(__dirname + '/config/DEV-aws-credentials.json');
 
 var TABLE_NAME = "NorthEats-Restaurant-Test";
 
@@ -55,10 +56,16 @@ exports.getRestaurantById = function(req, res) {
       if (err) {
           return res.status(400).json({
             success: false,
-            error: err
+            data: err
           });
-      } else {
-          return res.status(200).json({
+      } else if (isEmptyObject(data)) {
+        return res.status(401).json({
+          success: false,
+          data: data
+        });
+      }
+      else {
+          return res.status(403).json({
             success: true,
             data: data
           });
@@ -83,7 +90,7 @@ exports.deleteRestaurantById = function(req, res) {
       if (err) {
           return res.status(400).json({
             success: false,
-            error: err
+            data: err
           });
       } else {
           return res.status(200).json({

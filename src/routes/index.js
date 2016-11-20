@@ -9,27 +9,27 @@ var menu = require('./menu');
 module.exports = function(app) {
 
   //restaurant
-  app.get('/restaurant', restaurant.getAllRestaurants);
+  app.get('/api/restaurant', restaurant.getAllRestaurants);
 
-  app.post('/restaurant/:restaurantId', restaurant.postRestaurant);
+  app.post('/api/restaurant/:restaurantId', restaurant.postRestaurant);
 
-  app.get('/restaurant/:restaurantId', restaurant.getRestaurantById);
+  app.get('/api/restaurant/:restaurantId', restaurant.getRestaurantById);
 
-  app.delete('/restaurant/:restaurantId', restaurant.deleteRestaurantById);
+  app.delete('/api/restaurant/:restaurantId', restaurant.deleteRestaurantById);
 
-  app.put('/restaurant/:restaurantId', restaurant.updateRestaurantById);
-
+  /*
+  app.put('/api/restaurant/:restaurantId', restaurant.updateRestaurantById);
+  */
 
   //menu
-  app.post('/menu/:restaurantId', menu.postMenu);
+  app.post('/api/menu/:restaurantId', menu.postMenu);
 
-  app.get('/menu/:restaurantId', menu.getMenuFromRestaurant);
+  app.get('/api/menu/:restaurantId', menu.getMenuFromRestaurant);
 
-  app.delete('/menu/:restaurantId', menu.deleteMenuFromRestaurant);
+  app.delete('/api/menu/:restaurantId', menu.deleteMenuFromRestaurant);
   /*
   app.put('/menu/:restaurantId', menu.updateMenu);
 
-  app.delete('/menu/:restaurantId/:itemId', menu.deleteItemFromMenu);
   */
 
 }
