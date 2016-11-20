@@ -1,12 +1,10 @@
 var aws = require('aws-sdk');
 var shortid = require('shortid');
 
-aws.config.loadFromPath(__dirname + '/config/aws-credentials.json');
+aws.config.loadFromPath(__dirname + '/config/DEV-aws-credentials.json');
 
 var TABLE_NAME = "NorthEats-Menu-Test";
 
-
-var dynamodb = new aws.DynamoDB();
 var dynamodbClient = new aws.DynamoDB.DocumentClient();
 
 /*
@@ -28,7 +26,7 @@ exports.postMenu = function(req, res) {
     if (err) {
       return res.status(400).json({
         success: false,
-        error: err
+        data: err
       })
     }
     else {
@@ -55,9 +53,9 @@ exports.getMenuFromRestaurant = function(req, res) {
 
   dynamodbClient.get(params, function(err, data) {
     if (err) {
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
-        error: err
+        data: err
       })
     } else {
       return res.status(200).json({
@@ -86,7 +84,7 @@ exports.deleteMenuFromRestaurant = function(req, res) {
       if (err) {
           return res.status(400).json({
             success: false,
-            error: err
+            data: err
           });
       } else {
           return res.status(200).json({

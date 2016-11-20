@@ -1,1 +1,16 @@
 = Tests for NorthEats API
+
+== How to run NorthEats Tests
+
+1. Navigate to the `src` folder
+
+2. Run the node application as usual
+
+  $ npm install
+  $ node server.js
+
+3. Navigate back to the parent `NorthEats_API` folder and run:
+
+ $ mocha "test/**/*.js"
+
+This will run all of the .js testing files using the mocha testing package
