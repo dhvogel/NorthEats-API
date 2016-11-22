@@ -14,9 +14,8 @@
     "should": "11.1.1",
     "is-empty-object": "1.1.1",
     "faker": "3.1.0",
-    "dynalite": "1.0.3",
-    "dynamodb-test": "0.3.0",
-    "tape": "4.6.2"
+    "aws-sdk-mock": "1.6.1",
+    "chai": "3.5.0"
   },
   "description": "Welcome to the NorthEats API",
   "main": "src/server.js",
