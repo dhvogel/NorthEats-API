@@ -43,18 +43,14 @@ exports.postRestaurant = function(req, res) {
 GET /restaurant/:restaurantId
 */
 exports.getRestaurantById = function(req, res) {
-  // var restaurantId = req.params.restaurantId;
-  //
-  // console.log("in getRestaurantById")
-  //
-  // var params = {
-  //   TableName: TABLE_NAME,
-  //   Key: {
-  //       "restaurantId": restaurantId
-  //   }
-  // };
+  var restaurantId = req.params.restaurantId;
 
-  params = {}
+  var params = {
+    TableName: TABLE_NAME,
+    Key: {
+        "restaurantId": restaurantId
+    }
+  };
 
   dynamodbClient.get(params, function(err, data) {
       if (err) {
@@ -69,8 +65,7 @@ exports.getRestaurantById = function(req, res) {
         });
       }
       else {
-          console.log(data)
-          return res.status(403).json({
+          return res.status(200).json({
             success: true,
             data: data
           });
