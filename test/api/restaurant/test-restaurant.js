@@ -1,66 +1,83 @@
-var chai = require('chai');
-var AWS = require('aws-sdk-mock');
+var expect = require('chai').expect;
+var fs = require('fs-extra');
+var httpMocks = require('node-mocks-http');
+var dynalite = require('dynalite');
+var dynaliteServer;
+
+var aws = require('aws-sdk');
+var restaurant = require('../../../src/routes/restaurant');
+var TEST_TABLE_NAME = "Restaurants"
+
 
 
 describe('Restaurant', function() {
-  afterEach(function() {
-    AWS.restore('DynamoDB.DocumentClient');
-  })
 
-  describe('getRestaurantById', function() {
-
-    //========= SET UP MOCK ==========
-    it('Should return a restaurant object when restaurant with queried restaurantId is present in database', function() {
-      const restaurantId = 'testId'
-      const displayName = 'testName'
-      const email = 'test@test.com'
-      const phone = '1111111111'
-      const description = 'test description'
-
-      //AWS.mock statement must be BEFORE module in question is instantiated
-      AWS.mock('DynamoDB.DocumentClient', 'get', function(params, callback) {
-        callback(null,
-          {
-            Item: {
-              restaurantId: restaurantId,
-              displayName: displayName,
-              email: email,
-              description: description,
-              phone: phone
-            }
-          })
-       });
-
-      //========== SET UP FUNCTION CALL ==========
-      //MUST be instantiated AFTER AWS.mock statement
-      var restaurant = require('../../../src/routes/restaurant');
-
-      const req = {
-        params: {
-          restaurantId: restaurantId
-        }
-      }
-
-      const res = {
-          send: function(){ },
-          json: function(responseBody) {
-              var item = responseBody.data.Item;
-              chai.assert.equal(item.restaurantId, restaurantId);
-              chai.assert.equal(item.displayName, displayName);
-              chai.assert.equal(item.email, email);
-              chai.assert.equal(item.description, description);
-              chai.assert.equal(item.phone, phone);
-          },
-          status: function(responseStatus) {
-              chai.assert.equal(responseStatus, 200);
-              // This next line makes it chainable
-              return this;
-          }
-      }
-
-      restaurant.getRestaurantById(req, res);
+  beforeEach(function(done) {
 
 
+    dynaliteServer = dynalite({path: './mydb', createTableMs: 50});
+    dynaliteServer.listen(4567, function(err) {
+      if (err) throw err
+      console.log('Dynalite started on port 4567')
     })
+
+    var dynamo = new aws.DynamoDB({endpoint: 'http://localhost:4567'});
+    dynamo.listTables(console.log.bind(console));
+
+    var newTableParams = {
+      TableName: TEST_TABLE_NAME,
+      AttributeDefinitions: [{AttributeName: 'userId', AttributeType: 'S'}],
+      KeySchema: [{AttributeName: 'userId', KeyType: 'HASH'}],
+      ProvisionedThroughput: {
+          'ReadCapacityUnits': 1,
+          'WriteCapacityUnits': 1
+      }
+    };
+
+    dynamo.createTable(newTableParams, function(err, data) {
+      if (err) {
+          console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+          dynamo.listTables(console.log.bind(console));
+          done();
+      } else {
+          console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+          console.log("/nWaiting for table to be active");
+          done()
+      }
+    });
+
+  });
+
+  afterEach(function(done) {
+    fs.emptyDir('./mydb', function (err) {
+        if (err) {
+          console.log("\nERROR")
+          console.log(err)
+          done()
+        }
+        else {
+          console.log('success!');
+          var files = fs.walkSync('./mydb');
+          console.log(files);
+          done()
+        }
+    })
+
+    dynaliteServer.close()
   })
-})
+
+  it('is a canary test, should pass', function() {
+    expect(true).to.be.true;
+  });
+
+  it('should return all the restaurants', function() {
+    var request  = httpMocks.createRequest({
+        method: 'GET',
+        url: '/restaurant'
+    });
+    var response = httpMocks.createResponse();
+    restaurant.getAllRestaurants(request, response);
+    console.log(response.statusCode);
+    console.log(JSON.parse(response._getData()));
+  })
+});
