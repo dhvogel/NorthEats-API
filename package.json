@@ -12,7 +12,8 @@
     "dynalite": "1.0.3",
     "chai": "3.5.0",
     "fs-extra": "1.0.0",
-    "node-mocks-http": "1.5.4"
+    "node-mocks-http": "1.5.4",
+    "chai-as-promised": "6.0.0"
   },
   "description": "Welcome to the NorthEats API",
   "main": "src/server.js",
