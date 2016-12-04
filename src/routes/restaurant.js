@@ -144,7 +144,7 @@ exports.postRestaurant = function(req, res) {
 	}
 	
 	//Correct the characters of the display name, city, state
-	var displayNameForID = (req.body.displayName.replace(/\s+/g, '_').toLowerCase());
+	var displayNameForID = (req.body.displayName.replace(/\s+/g, '_').replace(/[']/g,"").toLowerCase());
 	var stateForID = (req.body.state.replace(/\s+/g, '').toLowerCase());
 	var cityForID = (req.body.city.replace(/\s+/g, '').toLowerCase());
 	
@@ -275,4 +275,119 @@ exports.deleteRestaurantById = function(req, res) {
           });
       }
   });
+}
+
+/*
+PUT /restaurant/:restaurantId
+*/
+
+exports.updateRestaurantById = function(req, res) {
+  var restaurantId = req.body.restaurantId;
+		
+  
+	var params = {
+	    TableName: TABLE_NAME,
+	    KeyConditionExpression: "restaurantId = :restaurantId",
+	    ExpressionAttributeValues: {
+	        ":restaurantId": restaurantId
+	    }
+	};
+
+	dynamodbClient.query(params, function(err, data) {
+	    if (err)
+	        console.log(JSON.stringify(err, null, 2));
+	    else{
+	
+			if(data["Count"] == 1){
+      		  var Items = data["Items"][0];
+			  
+		
+
+			  
+			  if (req.body.description.length > 0){
+				  Items["description"] = req.body.description;
+			  }
+ 
+		
+					//Check that the phone number is in the correct format/reformat it and right length
+					var phone = (req.body.phone.replace(/[\s-()]/g,""));
+
+					if(phone.length != 0){
+						if(phone.length != 10){
+							  		var error = "Phone number incorrect length."
+  
+							  		return res.status(417).json({
+							    	          success: false,
+							    	          error: error
+							    	        })
+								}
+					}
+		
+				    if (req.body.phone.length > 0){
+				  	  Items["phone"] = phone;
+				    }
+
+
+					//Check that the email contains the @ character
+					if(req.body.email.length != 0){
+						if(req.body.email.includes('@') == false){
+							  		var error = "Email format incorrect."
+  
+					  		return res.status(417).json({
+					    	          success: false,
+					    	          error: error
+					    	        })
+								}
+					}
+		
+				    if (req.body.email.length > 0){
+				  	  Items["email"] = req.body.email;
+				    }
+		
+		
+
+				//Check the size of the description
+				if (req.body.description.length > 200){
+    
+				  var err = "Description too long. Please Limit to 200 characters."
+  
+				  return res.status(431).json({
+				          success: false,
+				          error: err
+				        })
+				}
+
+
+				//The Date time
+				var date = new Date().getTime()
+				Items["dateTime"] = date
+				Items["restaurantId"] = restaurantId;
+			
+			  var params = {
+			    TableName: TABLE_NAME,
+				  Item: Items
+			  };
+			  
+			  dynamodbClient.put(params, function(err, data) {
+			      if (err) {
+			          return res.status(400).json({
+			            success: false,
+			            data: err
+			          });
+			      } else {
+			          return res.status(200).json({
+			            success: true,
+			            data: "Updated item with restaurantId " + restaurantId + " from " + TABLE_NAME + " table."
+			          });
+			      }
+			  });
+			}
+	
+		}
+		});
+  
+  
+  
+  
+  
 }

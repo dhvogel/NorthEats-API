@@ -17,9 +17,8 @@ module.exports = function(app) {
 
   app.delete('/api/restaurant/:restaurantId', restaurant.deleteRestaurantById);
 
-  /*
   app.put('/api/restaurant/:restaurantId', restaurant.updateRestaurantById);
-  */
+  
 
   //menu
   app.post('/api/menu/:restaurantId', menu.postMenu);
