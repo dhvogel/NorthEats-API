@@ -1,15 +1,13 @@
 {
-    "TableName": "test",
+    "TableName": "Restaurants",
     "AttributeDefinitions": [
-        {"AttributeName": "id", "AttributeType": "S"},
-        {"AttributeName": "range", "AttributeType": "N"}
+        {"AttributeName": "restaurantId", "AttributeType": "S"}
     ],
     "KeySchema": [
-        {"AttributeName": "id", "KeyType": "HASH"},
-        {"AttributeName": "range", "KeyType": "RANGE"}
+        {"AttributeName": "restaurantId", "KeyType": "HASH"}
     ],
     "ProvisionedThroughput": {
-        "ReadCapacityUnits": 10,
-        "WriteCapacityUnits": 100
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
     }
 }
