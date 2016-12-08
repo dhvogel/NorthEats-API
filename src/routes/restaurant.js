@@ -5,8 +5,7 @@ aws.config.loadFromPath(__dirname + '/config/DEV-aws-credentials.json');
 
 var TABLE_NAME = "NorthEats-Restaurant-Test";
 
-var dynamodb = new aws.DynamoDB();
-var dynamodbClient = new aws.DynamoDB.DocumentClient();
+var dynamodbClient = new aws.DynamoDB.DocumentClient({endpoint: 'http://localhost:4567'});
 
 
 
@@ -45,8 +44,6 @@ GET /restaurant/:restaurantId
 exports.getRestaurantById = function(req, res) {
   var restaurantId = req.params.restaurantId;
 
-  console.log("Requested restaurant Id:", restaurantId)
-
   var params = {
     TableName: TABLE_NAME,
     Key: {
@@ -54,10 +51,7 @@ exports.getRestaurantById = function(req, res) {
     }
   };
 
-  console.log("params", params)
-
   dynamodbClient.get(params, function(err, data) {
-      console.log("Requested restaurant data:", data)
       if (err) {
           return res.status(400).json({
             success: false,

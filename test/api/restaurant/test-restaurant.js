@@ -5,9 +5,10 @@ var httpMocks = require('node-mocks-http');
 var dynalite = require('dynalite');
 var dynaliteServer;
 
+
 var aws = require('aws-sdk');
 var restaurant = require('../../../src/routes/restaurant');
-var TEST_TABLE_NAME = "Restaurants"
+var TEST_TABLE_NAME = "NorthEats-Restaurant-Test"
 
 
 
@@ -75,15 +76,16 @@ describe('Restaurant', function() {
             TableName: TEST_TABLE_NAME
           }
           //scan just to make sure the put worked
-          dynamo.scan(params, function(err, data) {
-            if (err) {
-              console.log(err, err.stack); // an error occurred
-            }
-            else  {
-              console.log("Table Contents:\n", data);
-              done(); // successful response
-            }
-          });
+          // dynamo.scan(params, function(err, data) {
+          //   if (err) {
+          //     console.log(err, err.stack); // an error occurred
+          //   }
+          //   else  {
+          //     console.log("Table Contents:\n", data);
+          //     done(); // successful response
+          //   }
+          // });
+          done()
         }
       });
     }
@@ -113,26 +115,8 @@ describe('Restaurant', function() {
     expect(true).to.be.true;
   });
 
-  // GET /restaurant - POSTIVE
-  it('should return all the restaurants', function() {
-    //Arrange
-    var request  = httpMocks.createRequest({
-        method: 'GET',
-        url: '/restaurant'
-    });
-    var response = httpMocks.createResponse();
-
-    //Act
-    restaurant.getAllRestaurants(request, response);
-
-    //Assert
-    console.log(response.statusCode);
-    console.log(JSON.parse(response._getData()));
-  })
-
   //GET /restaurant/:restaurantId - POSTIVE
-  it('should return the restaurant with restaurantId "test"', function(done) {
-    this.timeout(4000)
+  it('should return status 200 and the restaurant object with restaurantId "test"', function(done) {
     var request  = httpMocks.createRequest({
         method: 'GET',
         url: '/restaurant/:restaurantId',
@@ -145,19 +129,48 @@ describe('Restaurant', function() {
     restaurant.getRestaurantById(request, response);
 
     var assertOnAction = function(response) {
-      console.log("test")
+      expect(response._getStatusCode()).to.be.eql(200);
+
       var parsedResponse = JSON.parse(response._getData());
+      expect(parsedResponse.success).to.be.eql(true);
       expect(parsedResponse.data.Item.restaurantId).to.be.eql('test');
-      expect(parsedResponse.data.Item.description).to.be.eql('test restaurant');
       done()
     }
 
     //this is a little hacky, can be improved later.
-    //assumes that the get will happen in 2 secs
+    //assumes that the get will happen in 100 ms
     setTimeout(function() {
       assertOnAction(response)
-    }, 3000);
+    }, 100);
+  });
+
+  it('should return status 401 if restaurantId does not exist in DB', function(done) {
+    //Arrange
+    var request  = httpMocks.createRequest({
+        method: 'GET',
+        url: '/restaurant/:restaurantId',
+        params: {
+          restaurantId: 'RESTAURANT_THAT_DOES_NOT_EXIST'
+        }
+    });
+    var response = httpMocks.createResponse();
+
+    //Act
+    restaurant.getRestaurantById(request, response);
+
+    //Assert
+    var assertOnAction = function(response) {
+      expect(response._getStatusCode()).to.be.eql(400);
+
+      var parsedResponse = JSON.parse(response._getData());
+      expect(parsedResponse.success).to.be.eql(false);
+      done();
+    }
+
+    setTimeout(function() {
+      assertOnAction(response)
+    }, 100);
+  });
 
 
-  })
 });
