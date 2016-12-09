@@ -24,7 +24,7 @@ This will run all of the .js testing files using the mocha testing package
 
 Here is how each file should be named:
 
-test-{method type}{url}.js
+**test-{method type}{url}.js**
 
 * Method type
 ** Examples - GET, PUT, POST, DELETE
