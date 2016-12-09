@@ -2,15 +2,36 @@
 
 == How to run NorthEats Tests
 
-1. Navigate to the `src` folder
+* Navigate to the parent `NorthEats_API` folder and run:
 
-2. Run the node application as usual
-
-  $ npm install
-  $ node server.js
-
-3. Navigate back to the parent `NorthEats_API` folder and run:
-
+ $ cd NorthEats_API
  $ mocha "test/**/*.js"
 
 This will run all of the .js testing files using the mocha testing package
+
+== Test Organization
+
+* One file tests one function
+  ** In order to keep testing files relatively short and concise, each file should contain a test suite for one function only
+  ** This test suite should include
+    *** Positive cases: What should happen when the interaction should be successful?
+    *** Negative cases: What should happen when an error should be thrown?
+    *** (Optional) Exception cases: For select methods, we should test that we are throwing the right exceptions.
+
+== Naming scheme for testing files
+
+* We are implementing a standardized naming scheme for testing files. This will allow us to tell what the file tests just by looking at its name.
+
+Here is how each file should be named:
+
+test-{method type}{url}.js
+
+* Method type
+** Examples - GET, PUT, POST, DELETE
+
+* url
+** Examples - restaurant, restaurant-'restaurantId', menu-'menuId'
+*** Because we can't include colons (:) or slashes (/) in file names, we are going to sub in dashes (-) and apostrophes (') instead
+
+* Example file name: test-{GET}{restaurant-'restaurantId'}.js
+** (This file would contain tests for the 'GET /restaurant/:restaurantId' method)
