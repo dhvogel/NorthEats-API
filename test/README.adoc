@@ -2,7 +2,7 @@
 
 == How to run NorthEats Tests
 
-* Navigate to the parent `NorthEats_API` folder and run:
+Navigate to the parent `NorthEats_API` folder and run:
 
  $ cd NorthEats_API
  $ mocha "test/**/*.js"
