@@ -2,6 +2,10 @@
   "name": "northeats-api-interface",
   "version": "0.0.1",
   "private": true,
+  "scripts": {
+    "test": "mocha --recursive test/api/restaurant",
+    "cover": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive test/api"
+  },
   "dependencies": {
     "async": "^1.5.2",
     "body-parser": "~1.13.2",
@@ -17,7 +21,10 @@
   },
   "description": "Welcome to the NorthEats API",
   "main": "src/server.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "istanbul": "^0.4.4",
+    "mocha": "^3.0.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dhvogel/NorthEats-API.git"

@@ -60,6 +60,9 @@ describe('Restaurant', function() {
     }
   });
 
+
+
+
   afterEach(function(done) {
     //clear out the mydb folder, removing state. This will be reconstructed in the beforeeach
     fs.emptyDir('./mydb', function (err) {
@@ -79,6 +82,10 @@ describe('Restaurant', function() {
 
     dynaliteServer.close()
   })
+
+
+
+
 
   it('is a canary test, should pass', function() {
     expect(true).to.be.true;
@@ -113,6 +120,10 @@ describe('Restaurant', function() {
     }, 100);
   });
 
+
+
+
+
   it('should return status 400 if there are no params', function(done) {
     //Arrange
     var request  = httpMocks.createRequest({
@@ -137,6 +148,10 @@ describe('Restaurant', function() {
       assertOnAction(response)
     }, 100);
   });
+
+
+
+  
 
   it('should return status 401 if restaurantId does not exist in DB', function(done) {
     //Arrange
