@@ -257,7 +257,8 @@ exports.deleteRestaurantById = function(req, res) {
     TableName: TABLE_NAME,
     Key: {
         "restaurantId": restaurantId
-    }
+    },
+		ReturnValues: "ALL_OLD"
   };
 
   dynamodbClient.delete(params, function(err, data) {
@@ -266,10 +267,16 @@ exports.deleteRestaurantById = function(req, res) {
             success: false,
             data: err
           });
-      } else {
+      } else if (isEmptyObject(data)) {
+					return res.status(401).json({
+						success: false,
+						data: {}
+					})
+
+			} else {
           return res.status(200).json({
             success: true,
-            data: restaurantId
+            data: data.Attributes.restaurantId
           });
       }
   });

@@ -104,6 +104,60 @@ describe('DELETE restaurant/:restaurantId', function() {
     setTimeout(function() {
       assertOnAction(response)
     }, 100);
+  });
+
+
+
+  it('should return status 400 if there are no params', function(done) {
+    //Arrange
+    var request  = httpMocks.createRequest({
+        method: 'DELETE',
+        url: '/restaurant/:restaurantId',
+    });
+    var response = httpMocks.createResponse();
+
+    restaurant.deleteRestaurantById(request, response);
+
+    var assertOnAction = function(response) {
+      expect(response._getStatusCode()).to.be.eql(400);
+
+      var parsedResponse = JSON.parse(response._getData());
+      expect(parsedResponse.success).to.be.eql(false);
+      done()
+    }
+
+    setTimeout(function() {
+      assertOnAction(response)
+    }, 100);
+  })
+
+
+
+
+  it('should return status 401 if restaurantId does not exist in the DB', function(done) {
+    //Arrange
+    var request  = httpMocks.createRequest({
+        method: 'DELETE',
+        url: '/restaurant/:restaurantId',
+        params: {
+          restaurantId: 'RESTAURANT_THAT_DOES_NOT_EXIST'
+        }
+    });
+    var response = httpMocks.createResponse();
+
+    restaurant.deleteRestaurantById(request, response);
+
+    var assertOnAction = function(response) {
+      expect(response._getStatusCode()).to.be.eql(401);
+
+      var parsedResponse = JSON.parse(response._getData());
+      expect(parsedResponse.success).to.be.eql(false);
+      done()
+    }
+
+    setTimeout(function() {
+      assertOnAction(response)
+    }, 100);
   })
 
 
