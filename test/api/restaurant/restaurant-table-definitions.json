@@ -1,0 +1,29 @@
+{
+  "tableOne": {
+    "TableName": "NorthEats-Restaurant-Test",
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "restaurantId",
+        "AttributeType": "S"
+      }
+    ],
+    "KeySchema": [
+      {
+        "AttributeName": "restaurantId",
+        "KeyType": "HASH"
+      }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+    }
+  },
+  "itemOne": {
+    "TableName": "NorthEats-Restaurant-Test",
+    "Item": {
+      "restaurantId": {
+        "S": "test"
+      }
+    }
+  }
+}

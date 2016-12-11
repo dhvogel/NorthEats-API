@@ -1,6 +1,7 @@
 var expect = require('chai').expect;
 require('chai').use(require('chai-as-promised'))
 var fs = require('fs-extra');
+var fsReg = require('fs');
 var httpMocks = require('node-mocks-http');
 var dynalite = require('dynalite');
 var dynaliteServer;
@@ -9,6 +10,9 @@ var dynaliteServer;
 var aws = require('aws-sdk');
 var restaurant = require('../../../src/routes/restaurant');
 var TEST_TABLE_NAME = "NorthEats-Restaurant-Test"
+
+var restaurantTableDefinitionsRaw = fsReg.readFileSync(__dirname + "/restaurant-table-definitions.json");
+var restaurantTableDefinitions = JSON.parse(restaurantTableDefinitionsRaw)
 
 
 
@@ -24,25 +28,7 @@ describe('Restaurant', function() {
 
     var dynamo = new aws.DynamoDB({endpoint: 'http://localhost:4567'});
 
-    var newTableParams = {
-      TableName: TEST_TABLE_NAME,
-      AttributeDefinitions: [
-        {
-          AttributeName: 'restaurantId',
-          AttributeType: 'S'
-        }
-      ],
-      KeySchema: [
-        {
-          AttributeName: 'restaurantId',
-          KeyType: 'HASH'
-        }
-      ],
-      ProvisionedThroughput: {
-          'ReadCapacityUnits': 1,
-          'WriteCapacityUnits': 1
-      }
-    };
+    var newTableParams = restaurantTableDefinitions.tableOne;
 
     dynamo.createTable(newTableParams, function(err, data) {
       if (err) {
@@ -56,14 +42,7 @@ describe('Restaurant', function() {
     });
 
     var postItemToTable = function(data) {
-      var params = {
-          TableName: TEST_TABLE_NAME,
-          Item: {
-            restaurantId: {
-              S: "test"
-            }
-          }
-      };
+      var params = restaurantTableDefinitions.itemOne;
 
       dynamo.putItem(params, function(err, data) {
         if (err) {
@@ -75,16 +54,6 @@ describe('Restaurant', function() {
           params = {
             TableName: TEST_TABLE_NAME
           }
-          //scan just to make sure the put worked
-          // dynamo.scan(params, function(err, data) {
-          //   if (err) {
-          //     console.log(err, err.stack); // an error occurred
-          //   }
-          //   else  {
-          //     console.log("Table Contents:\n", data);
-          //     done(); // successful response
-          //   }
-          // });
           done()
         }
       });
