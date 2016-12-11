@@ -1,6 +1,6 @@
 var aws = require('aws-sdk');
 
-aws.config.loadFromPath(__dirname + '/config/DEV-aws-credentials.json');
+aws.config.loadFromPath(__dirname + '/config/aws-credentials.json');
 
 var TABLE_NAME = "NorthEats-Menu-Test";
 
