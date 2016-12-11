@@ -10,10 +10,9 @@ var restaurantTableDefinitions = JSON.parse(fsReg.readFileSync(__dirname + "/res
 
 
 
-describe('GET restaurant/:restaurantId', function() {
+describe('DELETE restaurant/:restaurantId', function() {
 
   beforeEach(function(done) {
-
     dynaliteServer = dynalite({path: './mydb', createTableMs: 0});
     dynaliteServer.listen(4567, function(err) {
       if (err) throw err
@@ -39,7 +38,7 @@ describe('GET restaurant/:restaurantId', function() {
 
       dynamo.putItem(params, function(err, data) {
         if (err) {
-          console.log("Error putting item in table", err)
+          console.log("Error putting item in table", err);
           done()
         }
         else {
@@ -63,6 +62,7 @@ describe('GET restaurant/:restaurantId', function() {
           //console.log('mydb directory cleared');
           var files = fs.walkSync('./mydb');
           //console.log("files in mydb:", files);
+          //console.log("\n")
           done()
         }
     })
@@ -73,15 +73,16 @@ describe('GET restaurant/:restaurantId', function() {
 
 
 
-
   it('is a canary test, should pass', function() {
     expect(true).to.be.true;
   });
 
-  //GET /restaurant/:restaurantId - POSTIVE
-  it('should return status 200 and the restaurant object with restaurantId "test"', function(done) {
+
+
+  it('should return status 200 and the restaurantId of the deleted restaurant if it exists in the DB', function(done) {
+    //Arrange
     var request  = httpMocks.createRequest({
-        method: 'GET',
+        method: 'DELETE',
         url: '/restaurant/:restaurantId',
         params: {
           restaurantId: 'test'
@@ -89,83 +90,21 @@ describe('GET restaurant/:restaurantId', function() {
     });
     var response = httpMocks.createResponse();
 
-    restaurant.getRestaurantById(request, response);
+    restaurant.deleteRestaurantById(request, response);
 
     var assertOnAction = function(response) {
       expect(response._getStatusCode()).to.be.eql(200);
 
       var parsedResponse = JSON.parse(response._getData());
       expect(parsedResponse.success).to.be.eql(true);
-      expect(parsedResponse.data.Item.restaurantId).to.be.eql('test');
+      expect(parsedResponse.data).to.be.eql('test');
       done()
     }
 
-    //this is a little hacky, can be improved later.
-    //assumes that the get will happen in 100 ms
     setTimeout(function() {
       assertOnAction(response)
     }, 100);
-  });
+  })
 
-
-
-
-
-  it('should return status 400 if there are no params', function(done) {
-    //Arrange
-    var request  = httpMocks.createRequest({
-        method: 'GET',
-        url: '/restaurant/:restaurantId',
-    });
-    var response = httpMocks.createResponse();
-
-    //Act
-    restaurant.getRestaurantById(request, response);
-
-    //Assert
-    var assertOnAction = function(response) {
-      expect(response._getStatusCode()).to.be.eql(400);
-
-      var parsedResponse = JSON.parse(response._getData());
-      expect(parsedResponse.success).to.be.eql(false);
-      done();
-    }
-
-    setTimeout(function() {
-      assertOnAction(response)
-    }, 100);
-  });
-
-
-
-
-
-  it('should return status 401 if restaurantId does not exist in DB', function(done) {
-    //Arrange
-    var request  = httpMocks.createRequest({
-        method: 'GET',
-        url: '/restaurant/:restaurantId',
-        params: {
-          restaurantId: 'RESTAURANT_THAT_DOES_NOT_EXIST'
-        }
-    });
-    var response = httpMocks.createResponse();
-
-    //Act
-    restaurant.getRestaurantById(request, response);
-
-    //Assert
-    var assertOnAction = function(response) {
-      expect(response._getStatusCode()).to.be.eql(401);
-
-      var parsedResponse = JSON.parse(response._getData());
-      expect(parsedResponse.success).to.be.eql(false);
-      done();
-    }
-
-    setTimeout(function() {
-      assertOnAction(response)
-    }, 100);
-  });
 
 });
