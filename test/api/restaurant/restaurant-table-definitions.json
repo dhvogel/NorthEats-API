@@ -25,5 +25,13 @@
         "S": "test"
       }
     }
+  },
+  "itemTwo": {
+    "TableName": "NorthEats-Restaurant-Test",
+    "Item": {
+      "restaurantId": {
+        "S": "ItemTwo"
+      }
+    }
   }
 }

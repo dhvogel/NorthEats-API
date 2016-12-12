@@ -10,10 +10,9 @@ var restaurantTableDefinitions = JSON.parse(fsReg.readFileSync(__dirname + "/res
 
 
 
-describe('GET /restaurant/:restaurantId', function() {
+describe('GET /restaurant', function() {
 
   beforeEach(function(done) {
-
     dynaliteServer = dynalite({path: './mydb', createTableMs: 0});
     dynaliteServer.listen(4567, function(err) {
       if (err) throw err
@@ -35,15 +34,23 @@ describe('GET /restaurant/:restaurantId', function() {
     });
 
     var postItemToTable = function(data) {
-      var paramsOne = restaurantTableDefinitions.itemOne;
+      var params = restaurantTableDefinitions.itemOne;
+      var paramsTwo = restaurantTableDefinitions.itemTwo;
 
-      dynamo.putItem(paramsOne, function(err, data) {
+      dynamo.putItem(params, function(err, data) {
         if (err) {
-          console.log("Error putting item in table", err)
+          console.log("Error putting item in table", err);
           done()
         }
         else {
-          done()
+          dynamo.putItem(paramsTwo, function(err, data) {
+            if (err) {
+              console.log("Error putting item in table", err)
+              done()
+            } else {
+              done()
+            }
+          })
         }
       });
     }
@@ -63,6 +70,7 @@ describe('GET /restaurant/:restaurantId', function() {
           //console.log('mydb directory cleared');
           var files = fs.walkSync('./mydb');
           //console.log("files in mydb:", files);
+          //console.log("\n")
           done()
         }
     })
@@ -73,99 +81,39 @@ describe('GET /restaurant/:restaurantId', function() {
 
 
 
-
   it('is a canary test, should pass', function() {
     expect(true).to.be.true;
   });
 
-  //GET /restaurant/:restaurantId - POSTIVE
-  it('should return status 200 and the restaurant object with restaurantId "test"', function(done) {
+
+
+
+  it('should return status 200 and all restaurant objects in DB', function(done) {
+    //Arrange
     var request  = httpMocks.createRequest({
         method: 'GET',
-        url: '/restaurant/:restaurantId',
-        params: {
-          restaurantId: "test"
-        }
+        url: '/restaurant',
     });
     var response = httpMocks.createResponse();
 
-    restaurant.getRestaurantById(request, response);
+    //Act
+    restaurant.getAllRestaurants(request, response);
 
+    //Assert
     var assertOnAction = function(response) {
       expect(response._getStatusCode()).to.be.eql(200);
 
       var parsedResponse = JSON.parse(response._getData());
       expect(parsedResponse.success).to.be.eql(true);
-      expect(parsedResponse.data.Item.restaurantId).to.be.eql('test');
+      expect(parsedResponse.data.Count).to.be.eql(2);
+      expect(parsedResponse.data.Items[0]).to.have.property("restaurantId")
+      expect(parsedResponse.data.Items[1]).to.have.property("restaurantId")
+    }
+
+    setTimeout(function() {
+      assertOnAction(response)
       done()
-    }
-
-    //this is a little hacky, can be improved later.
-    //assumes that the get will happen in 100 ms
-    setTimeout(function() {
-      assertOnAction(response)
-    }, 100);
-  });
-
-
-
-
-
-  it('should return status 400 if there are no params', function(done) {
-    //Arrange
-    var request  = httpMocks.createRequest({
-        method: 'GET',
-        url: '/restaurant/:restaurantId',
-    });
-    var response = httpMocks.createResponse();
-
-    //Act
-    restaurant.getRestaurantById(request, response);
-
-    //Assert
-    var assertOnAction = function(response) {
-      expect(response._getStatusCode()).to.be.eql(400);
-
-      var parsedResponse = JSON.parse(response._getData());
-      expect(parsedResponse.success).to.be.eql(false);
-      done();
-    }
-
-    setTimeout(function() {
-      assertOnAction(response)
-    }, 100);
-  });
-
-
-
-
-
-  it('should return status 401 if restaurantId does not exist in DB', function(done) {
-    //Arrange
-    var request  = httpMocks.createRequest({
-        method: 'GET',
-        url: '/restaurant/:restaurantId',
-        params: {
-          restaurantId: 'RESTAURANT_THAT_DOES_NOT_EXIST'
-        }
-    });
-    var response = httpMocks.createResponse();
-
-    //Act
-    restaurant.getRestaurantById(request, response);
-
-    //Assert
-    var assertOnAction = function(response) {
-      expect(response._getStatusCode()).to.be.eql(401);
-
-      var parsedResponse = JSON.parse(response._getData());
-      expect(parsedResponse.success).to.be.eql(false);
-      done();
-    }
-
-    setTimeout(function() {
-      assertOnAction(response)
-    }, 100);
+    }, 200);
   });
 
 });

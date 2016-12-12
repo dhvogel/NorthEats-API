@@ -34,7 +34,7 @@ exports.getAllRestaurants = function(req, res) {
 	        data: data
 	      })
 	    };
-	  });
+	});
 }
 
 

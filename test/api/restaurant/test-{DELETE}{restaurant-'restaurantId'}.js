@@ -10,7 +10,7 @@ var restaurantTableDefinitions = JSON.parse(fsReg.readFileSync(__dirname + "/res
 
 
 
-describe('DELETE restaurant/:restaurantId', function() {
+describe('DELETE /restaurant/:restaurantId', function() {
 
   beforeEach(function(done) {
     dynaliteServer = dynalite({path: './mydb', createTableMs: 0});

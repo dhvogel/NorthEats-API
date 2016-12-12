@@ -13,12 +13,14 @@ module.exports = function(app) {
 
   app.post('/api/restaurant/:restaurantId', restaurant.postRestaurant);
 
+  //tested
   app.get('/api/restaurant/:restaurantId', restaurant.getRestaurantById);
 
+  //tested
   app.delete('/api/restaurant/:restaurantId', restaurant.deleteRestaurantById);
 
   app.put('/api/restaurant/:restaurantId', restaurant.updateRestaurantById);
-  
+
 
   //menu
   app.post('/api/menu/:restaurantId', menu.postMenu);
