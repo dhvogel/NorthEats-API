@@ -8,8 +8,11 @@ var menu = require('./menu');
 
 module.exports = function(app) {
 
-  //restaurant
+  //===restaurant API=======================================
+
+  //tested
   app.get('/api/restaurant', restaurant.getAllRestaurants);
+
 
   app.post('/api/restaurant/:restaurantId', restaurant.postRestaurant);
 
@@ -19,13 +22,21 @@ module.exports = function(app) {
   //tested
   app.delete('/api/restaurant/:restaurantId', restaurant.deleteRestaurantById);
 
+
   app.put('/api/restaurant/:restaurantId', restaurant.updateRestaurantById);
 
+  //========================================================
 
-  //menu
+
+
+  //===menu API===
+
+
   app.post('/api/menu/:restaurantId', menu.postMenu);
 
+
   app.get('/api/menu/:restaurantId', menu.getMenuFromRestaurant);
+
 
   app.delete('/api/menu/:restaurantId', menu.deleteMenuFromRestaurant);
   /*

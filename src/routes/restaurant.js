@@ -173,21 +173,20 @@ exports.postRestaurant = function(req, res) {
 		      })
 			}
 
-			else{
+			else {
 			    var params = {
 			      TableName: TABLE_NAME,
-				  Item: {
-					  	restaurantId: displayNameForID+"-"+cityForID+"-"+stateForID,
-						description: req.body.description,
-					  	displayName: req.body.displayName,
-					  	email: req.body.email,
-					  	phone: phone,
-					    city: req.body.city,
-					    state: req.body.state,
-					    dateTime: date
-				      }
-
-			    };
+					  Item: {
+						  	restaurantId: displayNameForID+"-"+cityForID+"-"+stateForID,
+								description: req.body.description,
+						  	displayName: req.body.displayName,
+						  	email: req.body.email,
+						  	phone: phone,
+						    city: req.body.city,
+						    state: req.body.state,
+						    dateTime: date
+					    }
+			  	};
 
 
 				dynamodbClient.put(params, function(err, data) {
