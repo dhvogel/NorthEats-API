@@ -5,12 +5,12 @@ var httpMocks = require('node-mocks-http');
 var dynalite = require('dynalite');
 var dynaliteServer;
 var aws = require('aws-sdk');
-var restaurant = require('../../../src/routes/restaurant');
-var restaurantTableDefinitions = JSON.parse(fsReg.readFileSync(__dirname + "/restaurant-table-definitions.json"));
+var menu = require('../../../src/routes/menu');
+var menuTableDefinitions = JSON.parse(fsReg.readFileSync(__dirname + "/menu-table-definitions.json"));
 
 
 
-describe('POST /restaurant/:restaurantId', function() {
+describe('GET /menu/:restaurantId', function() {
 
   beforeEach(function(done) {
     dynaliteServer = dynalite({path: './mydb', createTableMs: 0});
@@ -20,7 +20,7 @@ describe('POST /restaurant/:restaurantId', function() {
     })
 
     var dynamo = new aws.DynamoDB({endpoint: 'http://localhost:4567'});
-    var newTableParams = restaurantTableDefinitions.tableOne;
+    var newTableParams = menuTableDefinitions.tableOne;
 
     dynamo.createTable(newTableParams, function(err, data) {
       if (err) {
@@ -34,8 +34,7 @@ describe('POST /restaurant/:restaurantId', function() {
     });
 
     var postItemToTable = function(data) {
-      var params = restaurantTableDefinitions.itemOne;
-      var paramsTwo = restaurantTableDefinitions.itemTwo;
+      var params = menuTableDefinitions.itemOne;
 
       dynamo.putItem(params, function(err, data) {
         if (err) {
@@ -43,14 +42,7 @@ describe('POST /restaurant/:restaurantId', function() {
           done()
         }
         else {
-          dynamo.putItem(paramsTwo, function(err, data) {
-            if (err) {
-              console.log("Error putting item in table", err)
               done()
-            } else {
-              done()
-            }
-          })
         }
       });
     }
@@ -90,35 +82,23 @@ describe('POST /restaurant/:restaurantId', function() {
 
   it('should return 200 and the restaurantId if the request is successful', function(done) {
     var request  = httpMocks.createRequest({
-        method: 'POST',
-        url: '/restaurant/:restaurantId',
-        body: {
-          description: "A really good restaurant",
-          displayName: "Dan's House of Quinoa",
-          email: "QuinoaLover@Quinoa.com",
-          phone: "1111111111",
-          city: "Lexington",
-          state: "MA"
+        method: 'GET',
+        url: '/menu/:restaurantId',
+        params: {
+          restaurantId: "test"
         }
     });
     var response = httpMocks.createResponse();
 
-    restaurant.postRestaurant(request, response);
+    menu.getMenuById(request, response);
 
     var assertOnAction = function(response) {
       expect(response._getStatusCode()).to.be.eql(200);
 
       var parsedResponse = JSON.parse(response._getData());
+
       expect(parsedResponse.success).to.be.eql(true);
-      expect(parsedResponse.data.Item.restaurantId).to.be.eql('dans_house_of_quinoa-lexington-ma');
-      expect(parsedResponse.data.Item.description).to.be.eql('A really good restaurant');
-      expect(parsedResponse.data.Item.displayName).to.be.eql('Dan\'s House of Quinoa');
-      expect(parsedResponse.data.Item.email).to.be.eql('QuinoaLover@Quinoa.com');
-      expect(parsedResponse.data.Item.phone).to.be.eql('1111111111');
-      expect(parsedResponse.data.Item.city).to.be.eql('Lexington');
-      expect(parsedResponse.data.Item.state).to.be.eql('MA');
-
-
+      expect(parsedResponse.data.Item.restaurantId).to.be.eql('test');
     }
 
     //this is a little hacky, can be improved later.
@@ -126,6 +106,62 @@ describe('POST /restaurant/:restaurantId', function() {
     setTimeout(function() {
       assertOnAction(response)
       done()
-    }, 1000);
-  })
-})
+    }, 100);
+  });
+
+  it('should return status 400 if there are no params', function(done) {
+    //Arrange
+    var request  = httpMocks.createRequest({
+        method: 'GET',
+        url: '/menu/:restaurantId',
+    });
+    var response = httpMocks.createResponse();
+
+    //Act
+    menu.getMenuById(request, response);
+
+    //Assert
+    var assertOnAction = function(response) {
+      expect(response._getStatusCode()).to.be.eql(400);
+
+      var parsedResponse = JSON.parse(response._getData());
+      expect(parsedResponse.success).to.be.eql(false);
+      done();
+    }
+
+    setTimeout(function() {
+      assertOnAction(response)
+    }, 100);
+  });
+
+
+
+  it('should return status 401 if restaurantId does not exist in the menu DB', function(done) {
+    //Arrange
+    var request  = httpMocks.createRequest({
+        method: 'GET',
+        url: '/menu/:restaurantId',
+        params: {
+          restaurantId: 'MENU_THAT_DOES_NOT_EXIST'
+        }
+    });
+    var response = httpMocks.createResponse();
+
+    //Act
+    menu.getMenuById(request, response);
+
+    //Assert
+    var assertOnAction = function(response) {
+      expect(response._getStatusCode()).to.be.eql(401);
+
+      var parsedResponse = JSON.parse(response._getData());
+      expect(parsedResponse.success).to.be.eql(false);
+      done();
+    }
+
+    setTimeout(function() {
+      assertOnAction(response)
+    }, 100);
+  });
+
+});

@@ -1,10 +1,11 @@
 var aws = require('aws-sdk');
+var isEmptyObject = require('is-empty-object');
 
 aws.config.loadFromPath(__dirname + '/config/aws-credentials.json');
 
 var TABLE_NAME = "NorthEats-Menu-Test";
 
-var dynamodbClient = new aws.DynamoDB.DocumentClient();
+var dynamodbClient = new aws.DynamoDB.DocumentClient({endpoint: 'http://localhost:4567'});
 
 /*
 POST /menu/:restaurantId
@@ -40,7 +41,7 @@ exports.postMenu = function(req, res) {
 /*
 GET /menu/:restaurantId
 */
-exports.getMenuFromRestaurant = function(req, res) {
+exports.getMenuById = function(req, res) {
   var restaurantId = req.params.restaurantId;
 
   var params = {
@@ -52,15 +53,21 @@ exports.getMenuFromRestaurant = function(req, res) {
 
   dynamodbClient.get(params, function(err, data) {
     if (err) {
+        return res.status(400).json({
+          success: false,
+          data: err
+        });
+    } else if (isEmptyObject(data)) {
       return res.status(401).json({
         success: false,
-        data: err
-      })
-    } else {
-      return res.status(200).json({
-        success: true,
         data: data
-      })
+      });
+    }
+    else {
+        return res.status(200).json({
+          success: true,
+          data: data
+        });
     }
   })
 }

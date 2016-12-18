@@ -35,7 +35,7 @@ module.exports = function(app) {
   app.post('/api/menu/:restaurantId', menu.postMenu);
 
 
-  app.get('/api/menu/:restaurantId', menu.getMenuFromRestaurant);
+  app.get('/api/menu/:restaurantId', menu.getMenuById);
 
 
   app.delete('/api/menu/:restaurantId', menu.deleteMenuFromRestaurant);
