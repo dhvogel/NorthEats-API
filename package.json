@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "test": "mocha --recursive test/api",
+    "test": "mocha --recursive test/api/menu",
     "cover": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive test/api"
   },
   "dependencies": {
