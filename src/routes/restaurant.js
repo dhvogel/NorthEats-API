@@ -1,183 +1,163 @@
-var aws = require('aws-sdk');
-var isEmptyObject = require('is-empty-object');
+'use strict';
 
-aws.config.loadFromPath(__dirname + '/config/aws-credentials.json');
+const aws = require('aws-sdk');
+const isEmptyObject = require('is-empty-object');
 
-var TABLE_NAME = "NorthEats-Restaurant-Test";
-var dynamodbClient = new aws.DynamoDB.DocumentClient({endpoint: 'http://localhost:4567'});
+aws.config.loadFromPath(`${__dirname}/config/aws-credentials.json`);
+
+const TABLE_NAME = 'NorthEats-Restaurant-Test';
+const dynamodbClient = new aws.DynamoDB.DocumentClient({endpoint: 'http://localhost:4567'});
 
 
+// =====RESTAURANT API=====
 
 
-//=====RESTAURANT API=====
-
-//Jon
-//TODO:Should retrieve ALL Restaurant objects from DynamoDB
-/*
-GET /restaurant
-*/
 exports.getAllRestaurants = function(req, res) {
-	var params = {
-	  TableName : TABLE_NAME,
+	const params = {
+		TableName: TABLE_NAME
 	};
 
 	dynamodbClient.scan(params, function(err, data) {
-	    if (err) {
-	      return res.status(500).json({
-	        success: false,
-	        error: err
-	      })
-	    }
-	    else {
-	      return res.status(200).json({
-	        success: true,
-	        data: data
-	      })
-	    };
+		if (err) {
+			return res.status(500).json({
+				success: false,
+				error: err
+			});
+		} else {
+			return res.status(200).json({
+				success: true,
+				data: data
+			});
+		}
 	});
-}
+};
 
-
-//Rob
-//TODO: Should post a Restaurant Object to DynamoDB
-/*
-POST /restaurant
-*/
 exports.postRestaurant = function(req, res) {
 
 
+	// Check the size of the display name
+	if (req.body.displayName.length === 0) {
 
-	//Check the size of the display name
-	if (req.body.displayName.length == 0){
+		const err = 'Display name not found.';
 
-		  var err = "Display name not found."
+		return res.status(417).json({
+			success: false,
+			error: err
+		});
+	}
 
-		  return res.status(417).json({
-	  	          success: false,
-	  	          error: err
-	  	        })
-		}
+	// Check the size of the city
+	if (req.body.city.length === 0) {
 
-	//Check the size of the city
-	if (req.body.city.length == 0){
+		const err = 'City not found.';
 
-		  var err = "City not found."
+		return res.status(417).json({
+			success: false,
+			error: err
+		});
+	}
 
-		  return res.status(417).json({
-	  	          success: false,
-	  	          error: err
-	  	        })
-		}
+	// Check the size of the state
+	if (req.body.state.length === 0){
 
-	//Check the size of the state
-	if (req.body.state.length == 0){
+		const err = 'State not found.';
 
-		  var err = "State not found."
+		return res.status(417).json({
+			success: false,
+			error: err
+		});
+	}
 
-		  return res.status(417).json({
-	  	          success: false,
-	  	          error: err
-	  	        })
-		}
+		// Check that the phone number is in the correct format/reformat it and right length
+		const phone = req.body.phone.replace(/[\s-()]/g, '');
 
-		//Check that the phone number is in the correct format/reformat it and right length
-		var phone = (req.body.phone.replace(/[\s-()]/g,""));
-
-		if(phone.length == 0){
-	  		var err = "Phone number not found."
-
-	  		return res.status(417).json({
-	    	          success: false,
-	    	          error: err
-	    	        })
-		}
-
-		else if(phone.length != 10){
-	  		var err = "Phone number incorrect length."
+		if (phone.length == 0){
+	  		var err = 'Phone number not found.';
 
 	  		return res.status(417).json({
 	    	          success: false,
 	    	          error: err
-	    	        })
+	    	        });
+		}		else if (phone.length != 10){
+	  		var err = 'Phone number incorrect length.';
+
+	  		return res.status(417).json({
+	    	          success: false,
+	    	          error: err
+	    	        });
 		}
 
-		//Check that the email contains the @ character
-		if(req.body.email.length == 0){
-	  		var err = "Email not found."
+		// Check that the email contains the @ character
+		if (req.body.email.length == 0){
+	  		var err = 'Email not found.';
 
 	  		return res.status(415).json({
 	    	          success: false,
 	    	          error: err
-	    	        })
-		}
-
-		else if(req.body.email.includes('@') == false){
-	  		var err = "Email format incorrect."
+	    	        });
+		}		else if (req.body.email.includes('@') == false){
+	  		var err = 'Email format incorrect.';
 
 			res.status(417).json({
 				    	          success: false,
 				    	          error: err
-				    	        })
+				    	        });
 		}
 
-	//Check the size of the description
+	// Check the size of the description
 	if (req.body.description.length > 200){
 
-	  var err = "Description too long. Please Limit to 200 characters."
+	  var err = 'Description too long. Please Limit to 200 characters.';
 
 	  return res.status(431).json({
 	          success: false,
 	          error: err
-	        })
-	}
+	        });
+	}	else if (req.body.description.length == 0){
 
-	else if (req.body.description.length == 0){
-
-	  var err = "Description not found."
+	  var err = 'Description not found.';
 
 	  return res.status(417).json({
   	          success: false,
   	          error: err
-  	        })
+  	        });
 	}
 
-	//Correct the characters of the display name, city, state
-	var displayNameForID = (req.body.displayName.replace(/\s+/g, '_').replace(/[']/g,"").toLowerCase());
-	var stateForID = (req.body.state.replace(/\s+/g, '').toLowerCase());
-	var cityForID = (req.body.city.replace(/\s+/g, '').toLowerCase());
+	// Correct the characters of the display name, city, state
+	const displayNameForID = req.body.displayName.replace(/\s+/g, '_').replace(/[']/g, '').toLowerCase();
+	const stateForID = req.body.state.replace(/\s+/g, '').toLowerCase();
+	const cityForID = req.body.city.replace(/\s+/g, '').toLowerCase();
 
-	//The Date time
-	var date = new Date().getTime()
+	// The Date time
+	const date = new Date().getTime();
 
 
-	var params = {
+	const params = {
 	    TableName: TABLE_NAME,
-	    KeyConditionExpression: "restaurantId = :restaurantId",
+	    KeyConditionExpression: 'restaurantId = :restaurantId',
 	    ExpressionAttributeValues: {
-	        ":restaurantId": displayNameForID+"-"+cityForID+"-"+stateForID
+	        ':restaurantId': `${displayNameForID}-${cityForID}-${stateForID}`
 	    }
 	};
 
 	dynamodbClient.query(params, function(err, data) {
-	    if (err)
-	        console.log(JSON.stringify(err, null, 2));
-	    else{
+	    if (err) {
+console.log(JSON.stringify(err, null, 2));
+} else {
 
-			if(data["Count"] == 1){
+			if (data['Count'] == 1){
 
-			  var error = "Restaurant already exists for that name, city, and state."
+			  const error = 'Restaurant already exists for that name, city, and state.';
 
 			  return res.status(409).json({
 		        success: false,
 		        data: error
-		      })
-			}
-
-			else {
-			    var params = {
+		      });
+			}			else {
+			    const params = {
 			      TableName: TABLE_NAME,
 					  Item: {
-						  	restaurantId: displayNameForID+"-"+cityForID+"-"+stateForID,
+						  	restaurantId: `${displayNameForID}-${cityForID}-${stateForID}`,
 								description: req.body.description,
 						  	displayName: req.body.displayName,
 						  	email: req.body.email,
@@ -194,34 +174,31 @@ exports.postRestaurant = function(req, res) {
 				      return res.status(500).json({
 				        success: false,
 				        error: err
-				      })
-				    }
-				    else {
+				      });
+				    }				    else {
 				      return res.status(200).json({
 				        success: true,
 				        data: params
-				      })
-				    };
+				      });
+				    }
 				  });
 			}
 		}
 		});
 
 
-
-
-}
+};
 
 /*
 GET /restaurant/:restaurantId
 */
 exports.getRestaurantById = function(req, res) {
-  var restaurantId = req.params.restaurantId;
+  const restaurantId = req.params.restaurantId;
 
-  var params = {
+  const params = {
     TableName: TABLE_NAME,
     Key: {
-        "restaurantId": restaurantId
+        'restaurantId': restaurantId
     }
   };
 
@@ -236,28 +213,27 @@ exports.getRestaurantById = function(req, res) {
           success: false,
           data: data
         });
-      }
-      else {
+      } else {
           return res.status(200).json({
             success: true,
             data: data
           });
       }
   });
-}
+};
 
 /*
 DELETE /restaurant/:restaurantId
 */
 exports.deleteRestaurantById = function(req, res) {
-  var restaurantId = req.params.restaurantId;
+  const restaurantId = req.params.restaurantId;
 
-  var params = {
+  const params = {
     TableName: TABLE_NAME,
     Key: {
-        "restaurantId": restaurantId
+        'restaurantId': restaurantId
     },
-		ReturnValues: "ALL_OLD"
+		ReturnValues: 'ALL_OLD'
   };
 
   dynamodbClient.delete(params, function(err, data) {
@@ -270,7 +246,7 @@ exports.deleteRestaurantById = function(req, res) {
 					return res.status(401).json({
 						success: false,
 						data: {}
-					})
+					});
 
 			} else {
           return res.status(200).json({
@@ -279,95 +255,92 @@ exports.deleteRestaurantById = function(req, res) {
           });
       }
   });
-}
+};
 
 /*
 PUT /restaurant/:restaurantId
 */
 
 exports.updateRestaurantById = function(req, res) {
-  var restaurantId = req.body.restaurantId;
+  const restaurantId = req.body.restaurantId;
 
 
-	var params = {
+	const params = {
 	    TableName: TABLE_NAME,
-	    KeyConditionExpression: "restaurantId = :restaurantId",
+	    KeyConditionExpression: 'restaurantId = :restaurantId',
 	    ExpressionAttributeValues: {
-	        ":restaurantId": restaurantId
+	        ':restaurantId': restaurantId
 	    }
 	};
 
 	dynamodbClient.query(params, function(err, data) {
-	    if (err)
-	        console.log(JSON.stringify(err, null, 2));
-	    else{
+	    if (err) {
+ console.log(JSON.stringify(err, null, 2));
+} else {
 
-			if(data["Count"] == 1){
-      		  var Items = data["Items"][0];
-
-
+			if (data['Count'] == 1){
+      		  const Items = data['Items'][0];
 
 
 			  if (req.body.description.length > 0){
-				  Items["description"] = req.body.description;
+				  Items['description'] = req.body.description;
 			  }
 
 
-					//Check that the phone number is in the correct format/reformat it and right length
-					var phone = (req.body.phone.replace(/[\s-()]/g,""));
+					// Check that the phone number is in the correct format/reformat it and right length
+					const phone = req.body.phone.replace(/[\s-()]/g, '');
 
-					if(phone.length != 0){
-						if(phone.length != 10){
-							  		var error = "Phone number incorrect length."
+					if (phone.length != 0){
+						if (phone.length != 10){
+							  		var error = 'Phone number incorrect length.';
 
 							  		return res.status(417).json({
 							    	          success: false,
 							    	          error: error
-							    	        })
+							    	        });
 								}
 					}
 
 				    if (req.body.phone.length > 0){
-				  	  Items["phone"] = phone;
+				  	  Items['phone'] = phone;
 				    }
 
 
-					//Check that the email contains the @ character
-					if(req.body.email.length != 0){
-						if(req.body.email.includes('@') == false){
-							  		var error = "Email format incorrect."
+					// Check that the email contains the @ character
+					if (req.body.email.length != 0){
+						if (req.body.email.includes('@') == false){
+							  		var error = 'Email format incorrect.';
 
 					  		return res.status(417).json({
 					    	          success: false,
 					    	          error: error
-					    	        })
+					    	        });
 								}
 					}
 
 				    if (req.body.email.length > 0){
-				  	  Items["email"] = req.body.email;
+				  	  Items['email'] = req.body.email;
 				    }
 
 
-
-				//Check the size of the description
+				// Check the size of the description
 				if (req.body.description.length > 200){
 
-				  var err = "Description too long. Please Limit to 200 characters."
+				  var err = 'Description too long. Please Limit to 200 characters.';
 
 				  return res.status(431).json({
 				          success: false,
 				          error: err
-				        })
+				        });
 				}
 
 
-				//The Date time
-				var date = new Date().getTime()
-				Items["dateTime"] = date
-				Items["restaurantId"] = restaurantId;
+				// The Date time
+				const date = new Date().getTime();
+				Items['dateTime'] = date;
+				Items['restaurantId'] = restaurantId;
 
-			  var params = {
+			  const params = {
 			    TableName: TABLE_NAME,
 				  Item: Items
 			  };
@@ -381,7 +354,7 @@ exports.updateRestaurantById = function(req, res) {
 			      } else {
 			          return res.status(200).json({
 			            success: true,
-			            data: "Updated item with restaurantId " + restaurantId + " from " + TABLE_NAME + " table."
+			            data: `Updated item with restaurantId ${restaurantId} from ${TABLE_NAME} table.`
 			          });
 			      }
 			  });
@@ -391,7 +364,4 @@ exports.updateRestaurantById = function(req, res) {
 		});
 
 
-
-
-
-}
+};

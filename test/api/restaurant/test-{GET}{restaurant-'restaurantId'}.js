@@ -78,6 +78,8 @@ describe('GET /restaurant/:restaurantId', function() {
     expect(true).to.be.true;
   });
 
+
+
   //GET /restaurant/:restaurantId - POSTIVE
   it('should return status 200 and the restaurant object with restaurantId "test"', function(done) {
     var request  = httpMocks.createRequest({

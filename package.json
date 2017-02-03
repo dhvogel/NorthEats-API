@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "test": "mocha --recursive test/api/menu",
+    "test": "mocha --recursive test/api",
     "cover": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive test/api"
   },
   "dependencies": {
@@ -17,7 +17,8 @@
     "chai": "3.5.0",
     "fs-extra": "1.0.0",
     "node-mocks-http": "1.5.4",
-    "chai-as-promised": "6.0.0"
+    "chai-as-promised": "6.0.0",
+    "eslint": "3.15.0"
   },
   "description": "Welcome to the NorthEats API",
   "main": "src/server.js",

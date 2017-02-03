@@ -155,4 +155,71 @@ describe('POST /menu/:restaurantId', function() {
     }, 1000);
   })
 
+  it('should return 200 and the restaurantId if the request is successful', function(done) {
+    var request  = httpMocks.createRequest({
+        method: 'POST',
+        url: '/menu/:restaurantId',
+        params: {
+          "restaurantId": "test"
+        },
+        body: {
+          "menuItems": [
+            {
+              "itemId": "item1",
+              "itemName": "pizza",
+              "itemDescription": "A really good pizza",
+              "price": 9,
+              "available": true,
+              "options": [
+                {
+                  "optionNames": [
+                    "pepperoni",
+                    "extra cheese",
+                    "skittles"
+                  ],
+                  "requiredMax": 1,
+                  "requiredMin": 1
+                },
+                {
+                  "optionNames": [
+                    "cheese-whiz",
+                    "oreos",
+                    "mustard"
+                  ],
+                  "requiredMax": 1,
+                  "requiredMin": 1
+                }
+              ]
+            }
+          ]
+        }
+    });
+    var response = httpMocks.createResponse();
+
+    menu.postMenu(request, response);
+
+    var assertOnAction = function(response) {
+      expect(response._getStatusCode()).to.be.eql(200);
+
+      var parsedResponse = JSON.parse(response._getData());
+      expect(parsedResponse.success).to.be.eql(true);
+      expect(parsedResponse.data.Item.restaurantId).to.be.eql("test");
+      expect(parsedResponse.data.Item.menuItems.length).to.be.eql(1);
+      expect(parsedResponse.data.Item.menuItems[0]).to.have.property("itemId");
+      expect(parsedResponse.data.Item.menuItems[0]).to.have.property("itemName");
+      expect(parsedResponse.data.Item.menuItems[0]).to.have.property("itemDescription");
+      expect(parsedResponse.data.Item.menuItems[0]).to.have.property("price");
+      expect(parsedResponse.data.Item.menuItems[0]).to.have.property("available");
+      expect(parsedResponse.data.Item.menuItems[0]).to.have.property("options");
+
+    }
+
+    //this is a little hacky, can be improved later.
+    //assumes that the get will happen in 100 ms
+    setTimeout(function() {
+      assertOnAction(response)
+      done()
+    }, 1000);
+  })
+
 });
